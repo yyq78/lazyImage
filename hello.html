@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>懒加载</title>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/underscore.js/1.9.0/underscore-min.js"></script>
+    <style type="text/css">
+        #wrap{
+            width:80%;
+            height:800px;
+            margin:0 auto;
+            text-align:justify;
+
+        }
+       .card{
+           display: inline-block;
+           width:30%;
+           height:30%;
+           text-align:center;
+           position:relative;
+           border:1px solid silver;
+           border-radius:0.25em;
+       }
+        .card img{
+            position:absolute;
+            top:50%;
+            left:50%;
+            transform:translate(-50%,-50%);
+            max-width:100%;
+            max-height:100%;
+
+        }
+    </style>
+</head>
+<body>
+<div id="wrap">
+    <div class="card">
+    <img src="loading.gif" data-src="img1.jpg">
+    </div>
+    <div class="card">
+    <img src="loading.gif" data-src="img2.jpg">
+    </div>
+    <div class="card">
+    <img src="loading.gif" data-src="img3.jpg">
+    </div>
+    <div class="card">
+    <img src="loading.gif" data-src="img4.jpg">
+    </div>
+    <div class="card">
+    <img src="loading.gif" data-src="img5.jpg">
+    </div>
+    <div class="card">
+    <img src="loading.gif" data-src="img6.jpg">
+    </div>
+    <div class="card">
+    <img src="loading.gif" data-src="img7.jpg">
+    </div>
+    <div class="card">
+    <img src="loading.gif" data-src="img8.jpg">
+    </div>
+    <div class="card">
+    <img src="loading.gif" data-src="img9.jpg">
+    </div>
+    <div class="card">
+    <img src="loading.gif" data-src="img10.jpg">
+    </div>
+    <script>
+        // 注意: 需要引入jQuery和underscore
+        $(function() {
+            // 获取window的引用:
+            var $window = $(window);
+            // 获取包含data-src属性的img，并以jQuery对象存入数组:
+            var lazyImgs = _.map($('img[data-src]').get(), function (i) {
+                return $(i);
+            });
+            // 定义事件函数:
+            var onScroll = function () {
+                // 获取页面滚动的高度:
+                var wtop = $window.scrollTop();
+                // 判断是否还有未加载的img:
+                if (lazyImgs.length > 0) {
+                    // 获取可视区域高度:
+                    var wheight = $window.height();
+                    // 存放待删除的索引:
+                    var loadedIndex = [];
+                    // 循环处理数组的每个img元素:
+                    _.each(lazyImgs, function ($i, index) {
+                        // 判断是否在可视范围内:
+                        if ($i.offset().top - wtop < wheight) {
+                            // 设置src属性:
+                            $i.attr('src', $i.attr('data-src'));
+                            // 添加到待删除数组:
+                            loadedIndex.unshift(index);
+                        }
+                    });
+                    // 删除已处理的对象:
+                    _.each(loadedIndex, function (index) {
+                        lazyImgs.splice(index, 1);
+                    });
+                }
+            };
+            // 绑定事件:
+            $window.scroll(onScroll);
+            // 手动触发一次:
+            onScroll();
+        });
+
+    </script>
+</div>
+</body>
+</html>
